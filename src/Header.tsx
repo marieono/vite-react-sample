@@ -14,7 +14,7 @@ const Header = () => {
           color: "#fff",
         }}
       >
-        掲示板
+        体重管理アプリ
       </h1>
     </Box>
   )
