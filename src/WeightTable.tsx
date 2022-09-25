@@ -10,12 +10,7 @@ import {
 import { collection } from "firebase/firestore"
 import { useCollection } from "react-firebase-hooks/firestore"
 import { db } from "./firebase"
-
-type Inputs = {
-  name: string
-  date: string
-  weight: number
-}
+import type { WeightRecord } from "./types"
 
 const WeightTable = () => {
   const [collections, loading, error] = useCollection(
@@ -62,7 +57,7 @@ const WeightTable = () => {
       </TableHead>
       <TableBody>
         {docs.map((doc) => {
-          const weightRecord = doc.data() as Inputs
+          const weightRecord = doc.data() as WeightRecord
           return (
             <TableRow key={doc.id}>
               <TableCell>{weightRecord.name}</TableCell>

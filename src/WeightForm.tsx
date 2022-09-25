@@ -3,12 +3,7 @@ import { addDoc, collection } from "firebase/firestore"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { getDateText } from "./utils"
 import { db } from "./firebase"
-
-type Inputs = {
-  name: string
-  date: string
-  weight: number
-}
+import type { WeightRecord } from "./types"
 
 const height = 300
 
@@ -19,9 +14,9 @@ const WeightForm = () => {
     resetField,
     setValue,
     formState: { errors, isValid },
-  } = useForm<Inputs>({ mode: "onChange" })
+  } = useForm<WeightRecord>({ mode: "onChange" })
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<WeightRecord> = async (data) => {
     try {
       await addDoc(collection(db, "weight-records"), data)
       resetField("name")
