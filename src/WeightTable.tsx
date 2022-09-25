@@ -1,6 +1,44 @@
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material"
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material"
+import { collection } from "firebase/firestore"
+import { useCollection } from "react-firebase-hooks/firestore"
+import { db } from "./firebase"
+
+type Inputs = {
+  name: string
+  date: string
+  weight: number
+}
 
 const WeightTable = () => {
+  const [collections, loading, error] = useCollection(
+    collection(db, "weight-records")
+  )
+
+  if (loading) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>読込中…</Typography>
+      </Box>
+    )
+  }
+
+  if (error != null) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>読み込みに失敗しました。</Typography>
+        <Typography>{error.message}</Typography>
+      </Box>
+    )
+  }
+
   return (
     <Table>
       <TableHead>
@@ -13,16 +51,16 @@ const WeightTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        <TableRow>
-          <TableCell>Yuto</TableCell>
-          <TableCell>2022-09-20</TableCell>
-          <TableCell align="right">60kg</TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>Yuto</TableCell>
-          <TableCell>2022-09-20</TableCell>
-          <TableCell align="right">60kg</TableCell>
-        </TableRow>
+        {collections?.docs.map((doc) => {
+          const weightRecord = doc.data() as Inputs
+          return (
+            <TableRow key={doc.id}>
+              <TableCell>{weightRecord.name}</TableCell>
+              <TableCell>{weightRecord.date}</TableCell>
+              <TableCell align="right">{weightRecord.weight}kg</TableCell>
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
   )
