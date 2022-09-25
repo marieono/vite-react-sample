@@ -1,6 +1,8 @@
 import { Box, TextField, InputAdornment, Button, Stack } from "@mui/material"
+import { addDoc, collection } from "firebase/firestore"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { getDateText } from "./utils"
+import { db } from "./firebase"
 
 type Inputs = {
   name: string
@@ -14,9 +16,22 @@ const WeightForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    resetField,
+    setValue,
+    formState: { errors, isValid },
   } = useForm<Inputs>({ mode: "onChange" })
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      await addDoc(collection(db, "weight-records"), data)
+      resetField("name")
+      setValue("date", getDateText(new Date()))
+      resetField("weight")
+    } catch (e) {
+      alert(`FireStore への書き込み中にエラーが発生しました: ${e}`)
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box sx={{ height: `${height}px` }} />
@@ -71,7 +86,12 @@ const WeightForm = () => {
             error={errors.weight != null}
             helperText={errors.weight?.message ?? " "}
           />
-          <Button sx={{ m: 1 }} variant="contained" type="submit">
+          <Button
+            sx={{ m: 1 }}
+            variant="contained"
+            type="submit"
+            disabled={!isValid}
+          >
             保存
           </Button>
         </Stack>
