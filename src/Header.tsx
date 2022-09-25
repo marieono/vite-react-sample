@@ -1,5 +1,4 @@
-import { useTheme } from "@mui/material"
-import { Box } from "@mui/system"
+import { Box, useTheme } from "@mui/material"
 
 const Header = () => {
   const { palette } = useTheme()
