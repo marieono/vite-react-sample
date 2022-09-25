@@ -81,12 +81,7 @@ const WeightForm = () => {
             error={errors.weight != null}
             helperText={errors.weight?.message ?? " "}
           />
-          <Button
-            sx={{ m: 1 }}
-            variant="contained"
-            type="submit"
-            disabled={!isValid}
-          >
+          <Button variant="contained" type="submit" disabled={!isValid}>
             保存
           </Button>
         </Stack>
