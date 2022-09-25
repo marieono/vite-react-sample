@@ -1,53 +1,82 @@
-import { Box, TextField, InputAdornment, Button } from "@mui/material"
+import { Box, TextField, InputAdornment, Button, Stack } from "@mui/material"
+import { useForm, SubmitHandler } from "react-hook-form"
 import { getDateText } from "./utils"
 
-const height = 100
+type Inputs = {
+  name: string
+  date: string
+  weight: number
+}
+
+const height = 300
 
 const WeightForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>({ mode: "onChange" })
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data)
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Box sx={{ height: `${height}px` }} />
       <Box
         sx={{
           position: "fixed",
           bottom: 0,
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "center",
           width: "100%",
           height: `${height}px`,
-          padding: "15px 10px",
+          padding: "20px 15px 10px",
           boxShadow: "0 0 10px #ccc",
+          background: "#fff",
         }}
       >
-        <TextField
-          sx={{ m: 1, width: "120px" }}
-          size="small"
-          label="名前"
-          helperText=" "
-        />
-        <TextField
-          sx={{ m: 1 }}
-          size="small"
-          label="測定日"
-          type="date"
-          defaultValue={getDateText(new Date())}
-          helperText=" "
-        />
-        <TextField
-          sx={{ m: 1, width: "100px" }}
-          size="small"
-          label="体重"
-          InputProps={{
-            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
-          }}
-          helperText=" "
-        />
-        <Button sx={{ m: 1 }} variant="contained">
-          保存
-        </Button>
+        <Stack spacing={1}>
+          <TextField
+            size="small"
+            label="名前"
+            {...register("name", {
+              required: "入力してください。",
+            })}
+            error={errors.name != null}
+            helperText={errors.name?.message ?? " "}
+          />
+          <TextField
+            size="small"
+            label="測定日"
+            type="date"
+            defaultValue={getDateText(new Date())}
+            {...register("date", {
+              required: "入力してください。",
+              pattern: {
+                value: /^\d{4}-\d{2}-\d{2}$/,
+                message: "日付を正しく入力してください。",
+              },
+            })}
+            error={errors.date != null}
+            helperText={errors.date?.message ?? " "}
+          />
+          <TextField
+            size="small"
+            label="体重"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            }}
+            {...register("weight", {
+              required: "入力してください。",
+              valueAsNumber: true,
+              validate: (value) =>
+                !isNaN(value) || "半角数字で入力してください。",
+            })}
+            error={errors.weight != null}
+            helperText={errors.weight?.message ?? " "}
+          />
+          <Button sx={{ m: 1 }} variant="contained" type="submit">
+            保存
+          </Button>
+        </Stack>
       </Box>
-    </>
+    </form>
   )
 }
 
