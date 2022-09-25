@@ -22,6 +22,8 @@ const WeightTable = () => {
     collection(db, "weight-records")
   )
 
+  const docs = collections?.docs
+
   if (loading) {
     return (
       <Box sx={{ p: 2 }}>
@@ -39,6 +41,14 @@ const WeightTable = () => {
     )
   }
 
+  if (docs == null || docs.length === 0) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>まだ記録がありません。</Typography>
+      </Box>
+    )
+  }
+
   return (
     <Table>
       <TableHead>
@@ -51,7 +61,7 @@ const WeightTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {collections?.docs.map((doc) => {
+        {docs.map((doc) => {
           const weightRecord = doc.data() as Inputs
           return (
             <TableRow key={doc.id}>
